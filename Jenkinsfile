@@ -14,7 +14,8 @@ pipeline {
 
         stage('Start Server') {
             steps {
-                sh 'node server.js'
+                sh 'nohup node server.js>server.log>&1 &'
+                sh 'sleep 10'
             }
         }
 
