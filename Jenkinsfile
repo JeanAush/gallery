@@ -32,7 +32,7 @@ pipeline {
         post {
             success {
                 slacksend(
-                    channel: "${env.#devops06}",
+                    channel: "${env.devops06}",
                     webhookUrl: "${env.https://hooks.slack.com/services/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}",
                     color: 'good',
                     message: "Build Successful: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
