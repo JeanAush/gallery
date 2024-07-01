@@ -14,6 +14,7 @@ pipeline {
 
         stage('Start Server') {
             steps {
+                sh 'fuser -k 5000/tcp || true'
                 sh 'nohup node server.js>server.log>&1 &'
                 sh 'sleep 10'
             }
