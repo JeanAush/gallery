@@ -14,12 +14,16 @@ pipeline {
 
         stage('Start Server') {
             steps {
-                sh 'lsof -i :5000 | grep node | awk \'{print $2}\' | xargs kill -9 || true'
-                sh 'nohup node server.js > server.log 2>&1 &'
-                sh 'sleep 10'
+                script {
+                    try {
+                        sh 'lsof -i :5000 | grep node | awk \'{print $2}\' | xargs kill -9'
+                    } catch (Exception e) {
+                        // Ignore the error if no process is running on port 5000
+                    }
+                    sh 'nohup node server.js > server.log 2>&1 &'
+                }
             }
         }
-
         stage('Run Tests') {
             steps {
                 sh 'npm test'
