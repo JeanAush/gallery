@@ -14,7 +14,7 @@ pipeline {
 
         stage('Start Server') {
             steps {
-                sh 'fuser -k 5000/tcp || true'
+                sh 'lsof -i :5000 | grep node | awk \'{print $2}\' | xargs kill -9 || true'
                 sh 'nohup node server.js > server.log 2>&1 &'
                 sh 'sleep 10'
             }
