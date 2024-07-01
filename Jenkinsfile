@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         SLACK_CHANNEL = '#devops06'
-        SLACK_BASE_URL = 'https://hooks.slack.com/services/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'
+        SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/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'
     }
 
     stages {
@@ -35,18 +35,18 @@ pipeline {
     post {
         success {
             slackSend(
-                channel: "${env.SLACK_CHANNEL}",
-                baseUrl: "${env.SLACK_BASE_URL}",
+                channel: "${env.devops06}",
                 color: 'good',
                 message: "Build Successful: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+                tokenCredentialID: 'A07AWNX83BJ'
             )
         }
         failure {
             slackSend(
-                channel: "${env.SLACK_CHANNEL}",
-                baseUrl: "${env.SLACK_BASE_URL}",
+                channel: "${env.devops06}",
                 color: 'danger',
                 message: "Build Failed: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+                tokenCredentialId: 'A07AWNX83BJ'
             )
         }
     }
