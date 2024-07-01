@@ -38,7 +38,7 @@ pipeline {
                 channel: "${env.devops06}",
                 color: 'good',
                 message: "Build Successful: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
-                tokenCredentialID: 'A07AWNX83BJ'
+                tokenCredentialId: 'A07AWNX83BJ'
             )
         }
         failure {
