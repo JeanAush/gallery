@@ -49,4 +49,56 @@ pipeline {
         }
         
     }
+}pipeline {
+    agent any
+    environment {
+        SLACK_CHANNEL = '#devops06'
+        SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/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'
+    }
+
+    stages {
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
+        stage('Start Server') {
+            steps {
+                sh 'node server.js'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'npm test'
+            }
+            post {
+                failure {
+                    mail to: 'jean.auma@student.moringaschool.com',
+                         subject: 'failed tests',
+                         body: 'The build for the test failed. Check your Jenkins console for details on the fail, thank you.'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            slackSend(
+                channel: "${env.SLACK_CHANNEL}",
+                webhookUrl: "${env.SLACK_WEBHOOK_URL}",
+                color: 'good',
+                message: "Build Successful: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+            )
+        }
+        failure {
+            slackSend(
+                channel: "${env.SLACK_CHANNEL}",
+                webhookUrl: "${env.SLACK_WEBHOOK_URL}",
+                color: 'danger',
+                message: "Build Failed: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
+            )
+        }
+    }
 }
