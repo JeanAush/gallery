@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         SLACK_CHANNEL = '#devops06'
-        SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/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'
+        SLACK_BASE_URL = 'https://hooks.slack.com/services/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'
     }
 
     stages {
@@ -36,7 +36,7 @@ pipeline {
         success {
             slackSend(
                 channel: "${env.SLACK_CHANNEL}",
-                webhookUrl: "${env.SLACK_WEBHOOK_URL}",
+                baseUrl: "${env.SLACK_BASE_URL}",
                 color: 'good',
                 message: "Build Successful: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
             )
@@ -44,7 +44,7 @@ pipeline {
         failure {
             slackSend(
                 channel: "${env.SLACK_CHANNEL}",
-                webhookUrl: "${env.SLACK_WEBHOOK_URL}",
+                baseUrl: "${env.SLACK_BASE_URL}",
                 color: 'danger',
                 message: "Build Failed: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
             )
