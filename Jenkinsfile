@@ -18,7 +18,6 @@ pipeline {
                     try {
                         sh 'lsof -i :5000 | grep node | awk \'{print $2}\' | xargs kill -9'
                     } catch (Exception e) {
-                        // Ignore the error if no process is running on port 5000
                     }
                     sh 'nohup node server.js > server.log 2>&1 &'
                 }
@@ -29,12 +28,35 @@ pipeline {
                 sh 'npm test'
             }
             post {
-                failure {
-                    mail to: 'jean.auma@student.moringaschool.com',
-                         subject: 'Failed Tests',
-                         body: 'The build for the test failed. Check your Jenkins console for details on the fail, thank you.'
-                }
-            }
+        success {
+            emailext attachLog: true, 
+                body:
+                    """
+                    <p>EXECUTED: Job <b>\'${env.JOB_NAME}:${env.BUILD_NUMBER})\'</b></p>
+                    <p>
+                    View console output at 
+                    "<a href="${env.BUILD_URL}">${env.JOB_NAME}:${env.BUILD_NUMBER}</a>"
+                    </p> 
+                      <p><i>(Build log is attached.)</i></p>
+                    """,
+                subject: "Status: 'SUCCESS' -Job \'${env.JOB_NAME}:${env.BUILD_NUMBER}\'", 
+                to: 'YOUREMAIL@gmail.com'
+        }
+        failure {
+            emailext attachLog: true, 
+                body:
+                    """
+                    <p>EXECUTED: Job <b>\'${env.JOB_NAME}:${env.BUILD_NUMBER})\'</b></p>
+                    <p>
+                    View console output at 
+                    "<a href="${env.BUILD_URL}">${env.JOB_NAME}:${env.BUILD_NUMBER}</a>"
+                    </p> 
+                      <p><i>(Build log is attached.)</i></p>
+                    """,
+                subject: "Status: FAILURE -Job \'${env.JOB_NAME}:${env.BUILD_NUMBER}\'", 
+                to: 'YOUREMAIL@gmail.com'
+        }
+}
         }
     }
 
