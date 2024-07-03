@@ -36,13 +36,6 @@ pipeline {
                     sh 'npm test'
                 }
             }
-            post {
-                failure {
-                    mail to: 'jean.auma@student.moringaschool.com',
-                         subject: 'Failed Tests',
-                         body: 'The build for the test failed. Check your Jenkins console for details on the fail, thank you.'
-                }
-            }
         }
         stage('Restart Server') {
             steps {
@@ -52,12 +45,11 @@ pipeline {
             }
         }
     }
-    }
 
     post {
         success {
             slackSend(
-                channel: env.devops06,
+                channel: env.SLACK_CHANNEL,
                 color: 'good',
                 message: "Build Successful: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})",
                 tokenCredentialId: 'A07AWNX83BJ'
@@ -65,10 +57,11 @@ pipeline {
         }
         failure {
             slackSend(
-                channel: env.devops06,
+                channel: env.SLACK_CHANNEL,
                 color: 'danger',
                 message: "Build Failed: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})",
                 tokenCredentialId: 'A07AWNX83BJ'
             )
         }
     }
+}
