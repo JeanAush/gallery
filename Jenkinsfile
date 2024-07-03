@@ -9,7 +9,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh 'npm install'
-                sh 'npm install -g pm2'
+                sh 'npm install pm2'
             }
         }
 
