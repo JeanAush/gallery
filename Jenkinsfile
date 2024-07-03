@@ -17,11 +17,11 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'pm2 delete server || true'
+                        sh 'npx pm2 delete server || true'
                     } catch (Exception e) {
                         echo "No server was running"
                     }
-                    sh 'pm2 start server.js --name server'
+                    sh 'npx pm2 start server.js --name server'
                 }
             }
         }
