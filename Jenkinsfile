@@ -36,11 +36,23 @@ pipeline {
                     sh 'npm test'
                 }
             }
+            post {
+                failure {
+                    mail to: 'jean.auma@student.moringaschool.com',
+                         subject: 'Failed Tests',
+                         body: 'The build for the test failed. Check your Jenkins console for details on the fail, thank you.'
+                }
+            }
         }
         stage('Restart Server') {
             steps {
                 script {
-                    sh 'npx pm2 start server.js --name server'
+                    try {
+                        sh 'npx pm2 restart server || npx pm2 start server.js --name server'
+                    } catch (Exception e) {
+                        echo "Failed to restart the server, attempting to start it again."
+                        sh 'npx pm2 start server.js --name server'
+                    }
                 }
             }
         }
