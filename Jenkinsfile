@@ -3,6 +3,7 @@ pipeline {
     environment {
         SLACK_CHANNEL = '#devops06'
         SLACK_WEBHOOK_URL = credentials('A07AWNX83BJ')
+        NOTIFICATION_EMAIL = 'jean.auma@student.moringaschool.com'
     }
 
     stages {
@@ -37,23 +38,23 @@ pipeline {
                 }
             }
             post {
-        success {
-            emailext attachLog: true,
-                body: """<p>EXECUTED: Job <b>'${env.JOB_NAME}:${env.BUILD_NUMBER}'</b></p>
-                        <p>View console output at <a href="${env.BUILD_URL}">${env.JOB_NAME}:${env.BUILD_NUMBER}</a></p> 
-                        <p><i>(Build log is attached.)</i></p>""",
-                subject: "Status: 'SUCCESS' - Job '${env.JOB_NAME}:${env.BUILD_NUMBER}'",
-                to: 'jean.auma@student.moringaschool.com'
-        }
-        failure {
-            emailext attachLog: true,
-                body: """<p>EXECUTED: Job <b>'${env.JOB_NAME}:${env.BUILD_NUMBER}'</b></p>
-                        <p>View console output at <a href="${env.BUILD_URL}">${env.JOB_NAME}:${env.BUILD_NUMBER}</a></p> 
-                        <p><i>(Build log is attached.)</i></p>""",
-                subject: "Status: FAILURE - Job '${env.JOB_NAME}:${env.BUILD_NUMBER}'",
-                to: 'jean.auma@student.moringaschool.com'
+    always {
+        script {
+            try {
+                echo "Attempting to send email..."
+                emailext attachLog: true,
+                    body: """<p>EXECUTED: Job <b>'${env.JOB_NAME}:${env.BUILD_NUMBER}'</b></p>
+                            <p>View console output at <a href="${env.BUILD_URL}">${env.JOB_NAME}:${env.BUILD_NUMBER}</a></p> 
+                            <p><i>(Build log is attached.)</i></p>""",
+                    subject: "Status: '${currentBuild.result}' - Job '${env.JOB_NAME}:${env.BUILD_NUMBER}'",
+                    to: env.NOTIFICATION_EMAIL
+                echo "Email sent successfully"
+            } catch (Exception e) {
+                echo "Failed to send email: ${e.getMessage()}"
+            }
         }
     }
+}
         }
         stage('Restart Server') {
             steps {
