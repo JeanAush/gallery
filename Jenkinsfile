@@ -27,7 +27,14 @@ pipeline {
         }
         stage('Run Tests') {
             steps {
-                sh 'npm test'
+                script {
+                    try {
+                        sh 'npx pm2 stop server || true'
+                    } catch (Exception e) {
+                        echo "No server was running"
+                    }
+                    sh 'npm test'
+                }
             }
             post {
                 failure {
@@ -37,6 +44,14 @@ pipeline {
                 }
             }
         }
+        stage('Restart Server') {
+            steps {
+                script {
+                    sh 'npx pm2 start server.js --name server'
+                }
+            }
+        }
+    }
     }
 
     post {
