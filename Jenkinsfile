@@ -9,6 +9,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh 'npm install'
+                sh 'npm install -g pm2'
             }
         }
 
@@ -16,10 +17,11 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'lsof -i :5000 | grep node | awk \'{print $2}\' | xargs kill -9'
+                        sh 'pm2 delete server || true'
                     } catch (Exception e) {
+                        echo "No server was running"
                     }
-                    sh 'nohup node server.js > server.log 2>&1 &'
+                    sh 'pm2 start server.js --name server'
                 }
             }
         }
